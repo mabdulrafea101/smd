@@ -1,2 +1,2 @@
-# plastic-zohaib
-POS for Plastic factory in bakhar
+# Saiful Malook Distributors
+POS for SMD located in abbottabad.
