@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block static_content %}
+  
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Add Product Categories</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'products_list' %}">Products</a></li>
+            <li class="breadcrumb-item active"><a href="{% url 'products_category_list' %}">Categories</a></li>
+            <li class="breadcrumb-item">Add</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+    <!-- Add Product form -->
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit" class="btn btn-block bg-gradient-success btn-lg">Submit</button>
+            </form>
+        </div>
+        <div class="col-2"></div>
+    </div>
+{% endblock main_content %}
+
+
+{% block script_content %}
+  <script>
+      $('.select2bs4').select2({
+      theme: 'bootstrap4',
+      ajax: {
+                url: "https://api.github.com/search/repositories",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                return {
+                    q: params.term, // search term
+                    page: params.page
+                };
+                },
+                processResults: function (data, params) {
+                // parse the results into the format expected by Select2
+                // since we are using custom formatting functions we do not need to
+                // alter the remote JSON data, except to indicate that infinite
+                // scrolling can be used
+                params.page = params.page || 1;
+
+                return {
+                    results: data.items,
+                    pagination: {
+                    more: (params.page * 30) < data.total_count
+                    }
+                };
+                },
+                cache: true
+            },
+            placeholder: 'Search for a repository',
+            minimumInputLength: 1,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+
+    });
+
+            function formatRepo (repo) {
+            if (repo.loading) {
+                return repo.text;
+            }
+
+            var $container = $(
+                "<div class='select2-result-repository clearfix'>" +
+                "<div class='select2-result-repository__avatar'><img src='" + repo.owner.avatar_url + "' /></div>" +
+                "<div class='select2-result-repository__meta'>" +
+                    "<div class='select2-result-repository__title'></div>" +
+                    "<div class='select2-result-repository__description'></div>" +
+                    "<div class='select2-result-repository__statistics'>" +
+                    "<div class='select2-result-repository__forks'><i class='fa fa-flash'></i> </div>" +
+                    "<div class='select2-result-repository__stargazers'><i class='fa fa-star'></i> </div>" +
+                    "<div class='select2-result-repository__watchers'><i class='fa fa-eye'></i> </div>" +
+                    "</div>" +
+                "</div>" +
+                "</div>"
+            );
+
+            $container.find(".select2-result-repository__title").text(repo.full_name);
+            $container.find(".select2-result-repository__description").text(repo.description);
+            $container.find(".select2-result-repository__forks").append(repo.forks_count + " Forks");
+            $container.find(".select2-result-repository__stargazers").append(repo.stargazers_count + " Stars");
+            $container.find(".select2-result-repository__watchers").append(repo.watchers_count + " Watchers");
+
+            return $container;
+            }
+
+function formatRepoSelection (repo) {
+  return repo.full_name || repo.text;
+}
+  </script>
+{% endblock script_content %}

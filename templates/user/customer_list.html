@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static_content %}
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock static_content %}
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Customer List</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'purchaser-list' %}">Customer</a></li>
+            <li class="breadcrumb-item">List</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="row mb-2">
+            <div class="col-md-8">
+                <a href="{% url 'customer-add' %}" class="btn btn-outline-success"><i class="fa fa-plus"></i>Add Customer</a>
+            </div>
+            <div class="col-md-2"></div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-purple">
+                        <h3 class="card-title text-bold text-darl">Customer List</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">
+                                ID#</th>
+                                
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">
+                                Phone Number</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">
+                                Customer Name</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">
+                                Email</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">
+                                Address</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">
+                                Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            {% for data in customer %}
+
+                                <tr>
+                                    <th scope="row">{{ data.id }}</th>
+                                    <td>{{ data.phone}}</td>
+                                    <td>{{ data.person_name}}</td>
+                                    <td>{{ data.email}}</td>
+                                    <td>{{ data.address}}</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-sm-5"><a href="{% url 'customer-edit' data.id %}" class="btn btn-outline-success"><i class="fa fa-pen"></i></a></div>
+                                            <div class="col-sm-2"></div>
+                                            <div class="col-sm-5"><a href="{% url 'customer-delete' data.id %}" class="btn btn-outline-danger"><i class="fa fa-trash"></i></a></div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal -->
+
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="text-center text-light">
+                            <tr>
+                                <th rowspan="1" colspan="1">ID#</th>
+                                <th rowspan="1" colspan="1">Phone Number</th>
+                                <th rowspan="1" colspan="1">Purchaser Name</th>
+                                <th rowspan="1" colspan="1">Email</th>
+                                <th rowspan="1" colspan="1">Address</th>
+                                <th rowspan="1" colspan="1">Action</th>
+                            </tr>
+                        </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>     
+    </div>
+</div>
+{% endblock main_content %}
+
+
+{% block script_content %}
+  <!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true, 
+      "autoWidth": true,
+      "info": true,
+      "ordering": true,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+{% endblock script_content %}

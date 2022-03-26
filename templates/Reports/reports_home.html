@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block static_content %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}">
+
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Reports Page</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'reports-home' %}">Reports</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-info">
+        <div class="inner">
+          <h3>{{order_count}}</h3>
+
+          <p>Total Orders</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-bag"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% if total_expense_paid %}
+      <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>Rs.{{total_expense_paid}}</h3>
+
+          <p>Total Expenses</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-donate"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% else %}
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>Rs.0000</h3>
+
+          <p>Total Expenses</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-donate"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% endif %}
+    
+    {% if actual_profit > 0 %}
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3>Rs.{{actual_profit}}</h3>
+
+          <p>Total Actual Profit</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-folder"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% else %}
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-orange">
+        <div class="inner">
+          {% if actual_profit %}
+          <h3>Rs.{{actual_profit}}</h3>
+          {% else %}
+          <h3>Rs.0000</h3>
+          {% endif %}
+          
+
+          <p>Total Actual Loss</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-folder"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% endif %}
+    {% if est_profit > 0 %}
+      <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>Rs.{{est_profit}}</h3>
+
+          <p>Total Est. Profit</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-stats-bars"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% else %}
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-danger">
+        <div class="inner">
+          <h3>Rs.{{est_profit}}</h3>
+
+          <p>Total Est. Loss</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-stats-bars"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    {% endif %}
+    
+    <!-- ./col -->
+</div>
+<form action="{% url 'reports-home' %}" method="post">
+  {% csrf_token %}
+  <div class="row mb-2">
+    <div class="col-3">
+      <label for="daterange-btn">Filter Report</label>
+      <button type="button" class="btn btn-default float-right" id="daterange-btn">
+        <i class="far fa-calendar-alt"></i> Date range picker
+        <i class="fas fa-caret-down"></i>
+      </button>
+    </div>
+    <div class="col-3">
+      <input id="startdate" class="form-control"  type="text" name="filter-start" placeholder="From Date">
+    </div>
+    <div class="col-3">
+      <input id="enddate" class="form-control" type="text" name="filter-end" placeholder="To Date">
+    </div>
+    <div class="col-3">
+      <button type="submit" class="btn btn-flat btn-info"><i class="fas fa-search"></i> Search</button>
+    </div>
+  </div>
+</form>
+
+
+<div class="row mt-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-success">
+          <h3 class="card-title text-bold">Comulative Report List</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Orders</th>
+                <th class="text-info">Orders Total (Rs)</th>
+                <th class="text-info">Orders cost</th>
+                <th class="text-primary">Total Expense</th>
+                <th class="text-primary">Paid Expense</th>
+                <th class="text-danger">Unpaid Expense</th>
+                {% if t_est_profit >= 0 %}
+                <th class="text-success">Est. Profit</th>
+                {% else %}
+                <th class="text-success">Est. Loss</th>
+                {% endif %}
+                {% if t_actual_profit >= 0 %}
+                <th class="text-warning">Actual Profit</th>
+                {% else %}
+                <th class="text-warning">Actual Loss</th>
+                {% endif %}
+                
+                
+              </tr>
+            </thead>
+            <tbody style="text-align: center;">
+              
+                <tr>
+                  {% if range_orders %}
+                  <td><a href="#" class="text-bold text-info">{{range_orders}}</a></td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_order_cost %}
+                  <td>Rs.{{t_total_bill}}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_order_cost %}
+                  <td>Rs.{{t_total_order_cost}}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_expense %}
+                  <td>Rs.{{ t_total_expense }}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_expense_paid %}
+                  <td>Rs.{{t_total_expense_paid}}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_expense_unpaid %}
+                  <td>Rs.{{t_total_expense_unpaid}}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_expense_unpaid %}
+                  <td>Rs.{{t_est_profit}}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  {% if t_total_expense_unpaid %}
+                  <td>Rs.{{t_actual_profit}}/-</td>
+                  {% else %}
+                  <td>No Data</td>
+                  {% endif %}
+                  
+                  
+                </tr>
+              
+              
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Orders</th>
+                <th class="text-info">Orders Total (Rs)</th>
+                <th class="text-info">Orders cost</th>
+                <th class="text-primary">Total Expense</th>
+                <th class="text-primary">Paid Expense</th>
+                <th class="text-danger">Unpaid Expense</th>
+                {% if t_est_profit >= 0 %}
+                <th class="text-success">Est. Profit</th>
+                {% else %}
+                <th class="text-success">Est. Loss</th>
+                {% endif %}
+                {% if t_actual_profit >= 0 %}
+                <th class="text-warning">Actual Profit</th>
+                {% else %}
+                <th class="text-warning">Actual Loss</th>
+                {% endif %}
+              </tr>
+            </tfoot>
+          </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+  <!-- /.card -->
+  </div>
+</div>
+
+  {% endblock main_content %}
+
+  {% block script_content %}
+    <!-- DataTables  & Plugins -->
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+    <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+    <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+    <!-- date-range-picker -->
+    <script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
+
+    <script>
+    $(function () {
+        $("#example1").DataTable({
+        "responsive": true,
+        "lengthChange": false, 
+        "autoWidth": true,
+        "info": true,
+        "ordering": true,
+        "buttons": ["excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+    </script>
+    <script>
+    $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <script>
+        //Date range as a button
+        $('#daterange-btn').daterangepicker(
+            {
+            ranges   : {
+                'Today'       : [moment(), moment()],
+                'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+                'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate  : moment()
+            },
+            function (start, end) {
+            $('#reportrange span').html(start.format('YYYY-MM-DD') + ' --> ' + end.format('YYYY-MM-DD'))
+            $('#startdate').val(start.format('YYYY-MM-DD'))
+            $('#enddate').val(end.format('YYYY-MM-DD'))
+            }
+        )
+    </script>
+{% endblock script_content  %}

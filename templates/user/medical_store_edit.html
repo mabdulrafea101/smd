@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static_content %}
+{% endblock static_content %}
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Distributor</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'purchaser-list' %}">Distributor</a></li>
+            <li class="breadcrumb-item">Edit</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <form class="form-horizontal" method="post" >
+    {% csrf_token %}
+      <fieldset>
+
+        <!-- Form Name -->
+        <legend>Edit Distributor</legend>
+
+          {{form.as_p}}
+
+        <!-- Button -->
+        <div class="form-group mt-2">
+          <a href="{% url 'purchaser-list' %}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" id="singlebutton" name="singlebutton" class="btn btn-info">Edit</button>
+        </div>
+
+      </fieldset>
+    </form>
+  </div>
+  <div class="col-md-2"></div>
+</div>
+{% endblock main_content %}
+
+
+{% block script_content %}
+{% endblock script_content %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block static_content %}
+  
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Add Product Categories</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'expenses_list' %}">Expense</a></li>
+            <li class="breadcrumb-item active"><a href="{% url 'expenses_category_list' %}">Categories</a></li>
+            <li class="breadcrumb-item">Add</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">Expense Category Form</h3>
+            </div>
+            <div class="card-body">
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <button type="submit" class="btn btn-success btn-flat">Add Category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_content %}
+
+{% block script_content %}
+  
+{% endblock script_content  %}

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block static_content %}
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' %}">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+
+  {% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Add Product</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'products_list' %}">Products</a></li>
+            <li class="breadcrumb-item">Add</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+    <!-- Add Product form -->
+    
+    <div class="row">
+        <div class="col-12">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12">
+
+                      {% for error in errors %}
+                        <p>{{error}}</p>
+                      {% endfor %}
+                  </div>
+                </div>
+                <div class="card card-danger">
+                    <div class="card-header">
+                      <h3 class="card-title">Product Form</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-2">
+                        <div class="col-4">
+                          <label for="">Product Code</label>
+                          {{form.product_code}}
+                        </div>
+                        <div class="col-3">
+                          <label for="">Category</label>
+                            {{form.product_category}}
+                        </div>
+                        <div class="col-5">
+                          <label for="">Product Name</label>
+                            {{form.product_name}}
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-4">
+                          <label for="">Distributor</label>
+                          {{form.distributor}}
+                        </div>
+                        <div class="col-4">
+                          <label for="">Purchase Price</label>
+                          {{form.purchase_price}}
+                        </div>
+                        
+                        <div class="col-4">
+                          <label for="">Sale Price</label>
+                            {{form.sale_price}}
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-1"></div>
+                        <div class="col-8">
+                          <label for="">Description</label>
+                          {{form.description}}
+                        </div>
+                        <div class="col-3"></div>
+                       </div>
+
+                       <div class="row mb-2">
+                        <div class="col-4">
+                          <label for="">Check Box</label>
+                          <div class="form-group clearfix">
+                            <div class="icheck-danger d-inline">
+                              {{form.allow_pre_order}}
+                              <label for="checkboxPrimary1">Sell when Out of stock
+                              </label>
+                            </div>
+                          </div>   
+                        </div>
+                        <div class="col-3">
+                          <label for="">Product Image</label>
+                            {{form.image}}
+                        </div>
+                        <div class="col-5">
+                            <!-- Color Picker -->
+                          <label for="">Product Color</label>
+                          <div class="form-group">
+                            <div class="input-group my-colorpicker2">
+                              
+                              {{form.product_color}}
+                              <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-square"></i></span>
+                              </div>
+                            </div>
+                            <!-- /.input group -->
+                          </div>
+                          <!-- /.form group -->
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col-4"></div>
+                        <div class="col-4">
+                          <button type="submit" class="btn btn-block bg-gradient-info btn-lg">Add Product</button>
+                        </div>
+                        <div class="col-4"></div>
+                      </div>
+                    </div>
+
+                    <!-- /.card-body -->
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock main_content %}
+
+
+{% block script_content %}
+
+<!-- bootstrap color picker -->
+<script src="{% static 'plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' %}"></script>
+
+<script >
+
+    $(function(){
+          //Colorpicker
+        $('.my-colorpicker2').colorpicker()
+
+        $('.my-colorpicker2').on('colorpickerChange', function(event) {
+          $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+        })
+
+        $("input[data-bootstrap-switch]").each(function(){
+          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        })
+        
+    });
+    
+    
+    {% for error in form.errors.values %}
+      function alertFunction() {
+            toastr.error(' {{error}} ')
+          }
+        
+      {% endfor %}
+      window.onload = alertFunction;
+    
+
+</script>
+{% endblock script_content %}

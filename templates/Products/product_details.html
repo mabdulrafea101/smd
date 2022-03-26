@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block static_content %}
+  
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">{{product.id}}. {{product.product_name}}</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'products_list' %}">Products</a></li>
+            <li class="breadcrumb-item">Detail</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+    <!-- Detailed Product -->
+    <div class="row">
+        <div class="col-12">
+
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8">
+                  <div class="card card-widget">
+                    <div class="card-header">
+                      <h3 class="card-title text-warning text-bold">
+                        <i class="fas fa-text-width"></i>
+                        {{product.product_name}}
+                      </h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                      <!-- /.card-tools -->
+                    </div>
+                    <div class="card-body">
+                                <dl class="row">
+                                  <dt class="col-sm-4">Product Image</dt>
+                                  <dd class="col-sm-8">
+                                    {% if product.image %}
+                                      <img style=" width: 60%;" class="img-fluid" src="{{product.image.url}}" alt="Product Image">
+                                      {% else %}
+                                        <img style=" width: 60%;" class="img-fluid pad" src="../../uploads/default_img.jpg" alt="Product Image">
+                                    {% endif %}
+                                  </dd>
+                                  <dt class="col-sm-4">Product Color</dt>
+                                  <dd class="col-sm-8"><div style="width: 20%; height: 20px; background-color: {{product.product_color}};"></div></dd>
+                                  <dt class="col-sm-4">Measuring Unit</dt>
+                                  <dd class="col-sm-8">{{product.p_unit}}</dd>
+                                  <dt class="col-sm-4">Category</dt>
+                                  <dd class="col-sm-8">{{product.product_category}}</dd>
+                                  <dt class="col-sm-4">Added by</dt>
+                                  <dd class="col-sm-8">{{product.product_added_by}}</dd>
+                                  <dt class="col-sm-4">Purchase Price</dt>
+                                  <dd class="col-sm-8">Rs. {{product.purchase_price}}/-</dd>
+                                  <dt class="col-sm-4">Sale Price</dt>
+                                  <dd class="col-sm-8">Rs. {{product.sale_price}}/-</dd>
+                                  <dt class="col-sm-4">Pre Order Allowed</dt>
+                                  {% if product.allow_pre_order %}
+                                    <dd class="col-sm-8"><i class="fa fa-check text-success"></i></dd>
+                                  {% else %}
+                                    <dd class="col-sm-8"><i class="fa fa-times text-danger"></i></dd>
+                                  {% endif %}
+                                  <dt class="col-sm-4">Product sold ever</dt>
+                                  {% if product.is_never_sold %}
+                                    <dd class="col-sm-8"><i class="fa fa-times text-danger"></i></dd>
+                                  {% else %}
+                                    <dd class="col-sm-8"><i class="fa fa-check text-success"></i></dd>
+                                  {% endif %}
+                                  <dt class="col-sm-4">First Time added</dt>
+                                  <dd class="col-sm-8">{{ product.created_at }}</dd>
+                                  <dt class="col-sm-4">Recently Updated</dt>
+                                  <dd class="col-sm-8">{{ product.updated_at }}</dd>
+                                </dl>
+                                
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            
+        </div>
+    </div>
+{% endblock main_content %}
+
+
+{% block script_content %}
+  
+{% endblock script_content %}

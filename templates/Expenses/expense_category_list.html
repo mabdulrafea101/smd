@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block static_content %}
+  <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+  <div class="col-sm-6">
+      <h1 class="m-0">Expense Categories List</h1>
+  </div><!-- /.col -->
+  <div class="col-sm-6">
+      <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item active"><a href="{% url 'expenses_list' %}">Expense</a></li>
+          <li class="breadcrumb-item">Categories</li>
+      </ol>
+  </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+<div class="row mb-2">
+  <div class="col-3">
+    <a href="{% url 'expense_category_add' %}" type="button" class="btn btn-success btn-block btn-flat text-dark"><i class="fa fa-cart-arrow-down"></i> Create New Category</a>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-success">
+          <h3 class="card-title text-bold">Expense Category List</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody style="text-align: center;">
+              {% for e_cat in e_category %}
+                <tr>
+                  
+                  <td>{{e_cat.id}}</td>
+                  <td><a href="{% url 'expense_category_detail' e_cat.id %}" class="text-bold text-info">{{e_cat.name}}</a></td>
+                  <td>{{e_cat.description}}</td>
+                  <td>
+                    <a href="{% url 'expense_category_edit' e_cat.id %}" class="btn btn-warning btn-default btn-sm">
+                      <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a class="btn btn-danger btn-default btn-sm" data-toggle="modal" data-target="#modal_delete_{{e_cat.id}}">
+                      <i class="fas fa-times"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% include "Expenses/partials/expense_category_delete_modal.html" %}
+              {% endfor %}
+              
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </tfoot>
+          </table>
+      </div>
+      <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+  </div>
+</div>
+{% endblock main_content %}
+
+{% block script_content %}
+  <!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true, 
+      "autoWidth": true,
+      "info": true,
+      "ordering": true,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+{% endblock script_content %}

@@ -1,0 +1,69 @@
+{% load mathfilters %}
+<div class="card">
+  <div class="card-header bg-purple">
+      <h3 class="card-title text-bold">Today's Orders List</h3>
+  </div>
+  <!-- /.card-header -->
+  <div class="card-body">
+      <table id="example1" class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th><i class="fa fa-file text-info"></i> Invoice No.</th>
+            <th><i class="fa fa-user text-info"></i> Customer</th>
+            <th><i class="fa fa-phone text-info"></i> Phone</th>
+
+            <th><i class="fas fa-funnel-dollar text-info"></i> Total (Rs.)</th>
+            <th><i class="fas fa-funnel-dollar text-info"></i> Discount</th>
+            <th><i class="fas fa-funnel-dollar text-info"></i> Remaining (Rs.)</th>
+            <th><i class="fas fa-file text-info"></i> Status</th>
+            <th><i class="fas fa-calendar-alt text-info"></i> Date 
+              <i class="fas fa-clock text-info"></i> Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody style="text-align: center;">
+          {% for order in orders %}
+            <tr>
+            <!--  <td><a href="#" class="text-bold text-info">{{product.product_code}}</a></td>
+              -->
+              <td><a href="{% url 'order_detail' order.id %}" class="text-success text-bold">{{order.invoice_num}}</a></td>
+              <td>{{order.customer.person_name}}</td>
+              <td>{{order.customer.phone}}</td>
+              <td>{{order.total_bill}}</td>
+              <td>{{order.total_discount}}</td>
+              <td>{{ order.total_bill|sub:order.paid_amount }}</td>
+              {% if order.payment_type == 'Unpaid' %}
+              <td class="text-bold text-danger">{{order.payment_type}}</td>
+              {% elif order.payment_type == 'Installment' %}
+              <td class="text-bold text-orange">{{order.payment_type}}</td>
+              {% else %}
+              <td class="text-bold text-success">{{order.payment_type}}</td>
+              {% endif %}
+              
+              <td>{{order.updated_at.date}} - {{order.updated_at.time}}</td>
+              <td><a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-print-{{order.id}}">
+                <i class="fas fa-print text-dark"></i></a></td>
+            </tr>
+            {% include "Sales/partials/print_modal.html" %}
+          {% endfor %}
+          
+        </tbody>
+        <tfoot>
+          <tr>
+            <th><i class="fa fa-file text-info"></i> Invoice No.</th>
+            <th><i class="fa fa-user text-info"></i> Customer</th>
+            <th><i class="fa fa-phone text-info"></i> Phone</th>
+            <th><i class="fas fa-funnel-dollar text-info"></i> Total (Rs.)</th>
+            <th><i class="fas fa-funnel-dollar text-info"></i> Discount</th>
+            <th><i class="fas fa-funnel-dollar text-info"></i> Remaining (Rs.)</th>
+            <th><i class="fas fa-file text-info"></i> Status</th>
+            <th><i class="fas fa-calendar-alt text-info"></i> Date 
+              <i class="fas fa-clock text-info"></i> Time</th>
+            <th>Action</th>
+          </tr>
+        </tfoot>
+      </table>
+  </div>
+  <!-- /.card-body -->
+</div>
+<!-- /.card -->

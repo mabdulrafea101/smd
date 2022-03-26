@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block static_content %}
+
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">New Order</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'orders_list' %}">Orders</a></li>
+            <li class="breadcrumb-item">New</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+{% block main_content %}
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="form-group">
+                <label>Search Products</label>
+                <select class="form-control select2bs4" style="width: 100%;" id="order_product"></select>
+            </div>
+            <!-- /.form-group -->
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-12">
+            
+            <form class="form-horizontal" action="" method="post">
+                {% csrf_token %}
+
+                <div class="row mb-2" id="append_order">
+                    <div class="col-2"></div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label>Search Customer</label>
+                            <select class="form-control select2-danger" data-dropdown-css-class="select2-danger"  style="width: 100%;" id="order_customer"></select>
+                        </div>
+                    </div>
+                    <div class="col-1 text-center">
+                        <br>
+                        <h2 class="text-orange">-OR-</h2>
+                    </div>
+                    <div class="col-3">
+                        <br>
+                        <a href="{% url 'customer-add' %}" class="btn btn-flat bg-info"><i class="fas fa-users-cog"></i>New Customer</a>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-4">
+                        <input class="form-control" type="number" name="gst_amount" placeholder="GST amount(Rs)">
+                    </div>
+                    <div class="col-4"></div>
+                    <div class="col-2"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-2"></div>
+                    <div class="col-8" id="append_product">
+                        <!--Products will be appended here-->
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        
+                    </div>
+                    <div class="col-4">
+                        <!-- TODO:Remove button if no product is added-->
+                        <button type="submit" class="btn btn-block-md btn-success"><i class="fa fa-plus"></i> Place Order</button>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+{% endblock main_content %}
+
+{% block script_content %}
+
+  <script>
+      
+      $('#order_product').select2({
+        theme: 'bootstrap4',
+        ajax: {
+                    url: "{% url 'order_add' %}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term, // search term
+                            page: params.page
+                        };
+                    },
+                    processResults: function (data, params) {
+                        // parse the results into the format expected by Select2
+                        // since we are using custom formatting functions we do not need to
+                        // alter the remote JSON data, except to indicate that infinite
+                        // scrolling can be used
+                        params.page = params.page || 1;
+                        
+                        return {
+                            results: data,    
+                        }
+                    
+                    },
+                    cache: false,
+                },
+                
+        placeholder: "Search for Product",
+        allowClear: true,
+        minimumInputLength: 2,
+        templateResult: formatRepo,
+        templateSelection: formatRepoSelection,
+
+    });
+    
+    function formatRepo (repo) {
+        if (repo.image){
+            var $p_image = "<dt style='width:80%;' class='col-sm-4 text-warning p_img'><img style='height:150px;' class='img-fluid mb-3' src='../../uploads/" + repo.image + "' alt='No Photo for product'>"+"</dt>";
+        }
+        else {
+            var $p_image = "<dt class='col-sm-4 text-info p_img'>No Image for this product</dt>"
+        }
+        var $container = $(
+
+            "<div class='card'>"+
+              "<div class='card-header'>"+
+                "<h3 class='card-title text-orange p_name'>"+
+                  "<i class='fas fa-text-width'></i>"+
+                "</h3>"+
+              "</div>"+
+              "<div class='card-body'>"+
+                "<dl class='row'>"+
+                    $p_image+
+                    "<dd class='col-sm-8'>" +
+                        "<dl>"+
+                            "<dt class='col-sm-4 text-warning'>Product Code</dt>"+
+                            "<dd class='col-sm-8 p_code'></dd>"+
+                            "<dt class='col-sm-4 text-warning'>Product Color</dt>"+
+                            "<dd class='col-sm-8 p_color' style= 'width:50% ; background-color:"+ repo.product_color +";'></dd>"+
+                            "<dt class='col-sm-4 text-warning'>price</dt>"+
+                            "<dd class='col-sm-8 p_price'>"+
+                            "</dd>"+
+                        "</dl>"+
+                    "</dd>"+
+                    
+                "</dl>"+
+              "</div>"+
+
+            "</div>"
+        );
+
+        $container.find(".p_name").text(repo.product_name);
+        $container.find(".p_code").text(repo.product_code);
+        $container.find(".p_color").text(repo.product_color);
+        $container.find(".p_price").text("Rs. " + repo.sale_price + "/-");
+        return $container;
+        }
+
+    function formatRepoSelection (repo) {
+    return repo.product_name;
+    }
+
+    $('#order_product').on('select2:select', function (e) {
+    var data = e.params.data;
+    console.log(data.product_name);
+    if (data.allow_pre_order){
+        var $qty = "<div class='col-1'><input class='form-control' type='number' name='p_quantity' id='' value='1' min='1'></div>"
+    }
+    else {
+        var $qty = "<div class='col-1'><input class='form-control' type='number' name='p_quantity' id='' value='1' min='1' max='"+ data.inventory_quantity +"'></div>"
+    }
+    var $appended_product = $(
+        "<div style='border: 2px solid slategray;' class='row'>"+
+            "<div class='col-4'><p class='text-orange text-bold'>"+ data.product_name +"</p></div>"+
+            "<div class='col-2'><input class='form-control' type='number' name='sold_price' id='' value='"+ data.sale_price +"' min='"+ data.sale_price +"'></div>"+
+            "<div class='col-1 text-center'> _ </div>"+
+            "<div class='col-2'><input class='form-control' type='number' name='p_discount' id='' placeholder='Discount' max='"+ data.sale_price +"'></div>"+
+            "<div class='col-1 text-center'>"+ "<input type='hidden' name='product_to_add_id' value='"+ data.id +"'>x" +"</div>"+
+            $qty +
+            "<div class='col-1 '>"+
+                "<button class='btn btn-app-sm btn-danger' onclick=removeItemFromOrder(this)>"+
+                    "<i class='fa fa-times'></i>"+
+                "</button>"+
+            "</div>"+
+        "</div>"
+        );
+    $appended_product.appendTo('#append_product')
+    });
+
+    
+    function removeItemFromOrder(item) {
+        
+        var $product_container = $()
+            // if no item left in order
+            // hide order-list and show no-order
+            $(item).parent().parent().remove();
+    }
+
+    $('#order_customer').select2({
+        theme: 'bootstrap4',
+        ajax: {
+                    url: "{% url 'order_add_customer' %}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term, // search term
+                            page: params.page
+                        };
+                    },
+                    processResults: function (data, params) {
+                        // parse the results into the format expected by Select2
+                        // since we are using custom formatting functions we do not need to
+                        // alter the remote JSON data, except to indicate that infinite
+                        // scrolling can be used
+                        params.page = params.page || 1;
+                        
+                        return {
+                            results: data,    
+                        }
+                    
+                    },
+                    cache: false,
+                },
+                
+        placeholder: "Search for Customer",
+        allowClear: true,
+        minimumInputLength: 2,
+        templateResult: formatCustomer,
+        templateSelection: formatCustomerSelection,
+
+    });
+  function formatCustomer(repo) {
+      if (repo.email){
+          var $email = "<div class='row'>" +
+                            "<div class='col-sm-4'><p class='text-danger text-bold'>Email:</p></div>"+
+                            "<div class='col-sm-8'><p class='text-info text-bold'>"+ repo.email +"</p></div>"+
+                        "</div>"
+      }
+      else {
+        var $email = ""
+      }
+      if (repo.address){
+          var $address = "<div class='row'>" +
+                            "<div class='col-sm-4'><p class='text-danger text-bold'>Address:</p></div>"+
+                            "<div class='col-sm-8'><p class='text-info text-bold'>"+ repo.address +"</p></div>"+
+                        "</div>"
+      }
+      else {
+        var $address = ""
+      }
+      if (repo.phone){
+          var $phone = "<div class='row'>" +
+                            "<div class='col-sm-4'><p class='text-danger text-bold'><i class='fas fa-phone'></i> Phone:</p></div>"+
+                            "<div class='col-sm-8'><p class='text-info text-bold'>"+ repo.phone +"</p></div>"+
+                        "</div>"
+      }
+      else {
+        var $phone = ""
+      }
+    var $container = $(
+        "<div class='card'>"+
+            "<div class='card-header'>"+
+            "<h3 class='card-title text-orange'>"+
+                "<i class='fas fa-users-cog'> &nbsp;</i>"+ repo.person_name +
+            "</h3>"+
+            "</div>"+
+            "<div class='card-body'>"+
+                $phone +
+                $email +
+                $address +
+            "</div>"+
+        "</div>"
+    );
+    
+    return $container;
+    }
+
+function formatCustomerSelection (repo) {
+return repo.person_name;
+}
+
+$('#order_customer').on('select2:select', function (e) {
+    var data = e.params.data;
+    console.log(data.id);
+
+    var $appended_order = $(
+        "<div class='row mb-2'>"+
+            "<div class='col-2 text-center'></div>"+
+            "<div class='col-2 text-center'> Customer Name : "+ "<input type='hidden' name='customer_to_add_id' value='"+ data.id +"'>"+"</div>"+
+            "<div class='col-2'><h5 class='text-orange text-bold'>"+ data.person_name +"</h5></div>"+
+            "<div class='col-2 text-center'> Customer Phone : </div>"+
+            "<div class='col-2'><h5 class='text-orange text-bold'>"+ data.phone +"</h5></div>"+
+            "<div class='col-2 text-center'></div>"+
+        "</div>"
+        );
+    $appended_order.replaceAll('#append_order')
+
+
+});
+</script>
+<script>
+    $(document).ready(function(){
+        $('#replace_fitter').hide();
+        $('#replace_salesman').hide();
+        $('#customSwitch3').click(function(){
+            if($(this).is(":checked")){
+                $('#replace_salesman').show();
+                console.log("replace_salesman is checked.");
+            }
+            else if($(this).is(":not(:checked)")){
+                $('#replace_salesman').hide();
+                console.log("replace_fitter is unchecked.");
+            }
+        });
+    
+
+        $('#customSwitch4').click(function(){
+            if($(this).is(":checked")){
+                $('#replace_fitter').show();
+                console.log("replace_fitter is checked.");
+            }
+            else if($(this).is(":not(:checked)")){
+                $('#replace_fitter').hide();
+                console.log("replace_fitter is unchecked.");
+            }
+        });
+    
+    
+    });
+</script>
+
+{% endblock script_content %}

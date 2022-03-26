@@ -1,0 +1,51 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block main_content %}
+
+<div class="login-box">
+  <div class="login-logo">
+    <a href="#"><b>Saiful Malook </b>Distributor</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Sign in to start your session</p>
+
+      <form method="post" action="{% url 'login_url' %}" class="form-validate">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+          <div class="alert alert-danger mt-1">
+            {{ error }}
+          </div>
+        {% endfor %}
+        {% if next %}
+          <input type="hidden" name="next" value="{{next}}">
+        {% endif %}
+
+        {% for field in form %}
+        <div class="input-group mb-3">
+          {{ field }}
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+
+
+          {% if field.errors %}
+            <div class="alert alert-danger">{{ field.errors }}</div>
+          {% endif %}
+
+        {% endfor %}
+          <button id="login" type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+
+{% endblock main_content %}

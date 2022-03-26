@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Users List</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'user-list' %}">Users</a></li>
+            <li class="breadcrumb-item">Staff</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-2"></div>
+
+    <div class="col-md-8">
+        <div class="register-box-body">
+            <h2 class="login-box-msg">Register a new Staff</h2>
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
+                    </div>
+                {% endif %}
+            <form action="{% url 'signup-staff' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-user text-light"></i></span>
+                    <input type="text" class="form-control" placeholder="Username*" name="username" required>
+                    <p class="input-group help-block text-muted">
+                        <small class="text-warning">Username is required and mandatory. You will use this username for login later</small>
+                    </p>
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-circle text-primary"></i></span>
+                    <input type="text" class="form-control" placeholder="First Name" name="first_name" aria-label="First Name" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-circle text-success"></i></span>
+                    <input type="text" class="form-control" placeholder="Last Name" name="last_name">
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-envelope text-light"></i></span>
+                    <input type="email" class="form-control" placeholder="Email" name="email" aria-label="Email" aria-describedby="basic-addon1" required>
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-lock text-danger"></i></span>
+                    <input type="password" class="form-control" placeholder="Password" name="password1" aria-label="Password" aria-describedby="basic-addon1">
+                </div>
+                <div>
+                    <p class="input-group help-block text-muted">
+                        <small class="text-warning">
+                            Make sure your password:
+                            <ul>
+                                <li>Contains Number</li>
+                                <li>Contains Alphabet(lower and upper)</li>
+                                <li>Contains Alphanumeric Character</li>
+                            </ul>
+                        </small>
+                    </p>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-lock text-success"></i></span>
+                    <input type="password" class="form-control" placeholder="Retype password" name="password2"  aria-label="Retype Password" aria-describedby="basic-addon1">
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-4">
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-2"></div>
+</div>
+{% endblock main_content %}

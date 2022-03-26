@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mathfilters %}
+
+{% block static_content %}
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Orders Completed</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'orders_list' %}">Orders</a></li>
+            <li class="breadcrumb-item">List</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+{% block main_content %}
+    <div class="row mb-2">
+        <div class="col-3">
+            <a href="{% url 'order_add' %}" type="button" class="btn btn-warning btn-block btn-flat"><i class="fa fa-cart-arrow-down"></i> Create New Order</a>
+        </div>
+    </div>
+    <div class="row mb-2">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-purple">
+              <h3 class="card-title text-bold">Orders List</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th><i class="fa fa-file text-info"></i> Invoice No.</th>
+                    <th><i class="fa fa-user text-info"></i> Customer</th>
+                    <th><i class="fa fa-phone text-info"></i> Phone</th>
+
+                    <th><i class="fas fa-funnel-dollar text-info"></i> Total (Rs.)</th>
+                    <th><i class="fas fa-funnel-dollar text-info"></i> Discount</th>
+                    <th><i class="fas fa-funnel-dollar text-info"></i> Remaining (Rs.)</th>
+                    <th><i class="fas fa-file text-info"></i> Status</th>
+                    <th><i class="fas fa-calendar-alt text-info"></i> Date 
+                      <i class="fas fa-clock text-info"></i> Time</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody style="text-align: center;">
+                  {% for order in orders %}
+                    <tr>
+                    <!--  <td><a href="#" class="text-bold text-info">{{product.product_code}}</a></td>
+                      -->
+                      <td><a href="{% url 'order_detail' order.id %}" class="text-success text-bold">{{order.invoice_num}}</a></td>
+                      <td>{{order.customer.person_name}}</td>
+                      <td>{{order.customer.phone}}</td>
+                      <td>{{order.total_bill}}</td>
+                      <td>{{order.total_discount}}</td>
+                      <td>{{ order.total_bill|sub:order.paid_amount }}</td>
+                      {% if order.payment_type == 'Unpaid' %}
+                      <td class="text-bold text-danger">{{order.payment_type}}</td>
+                      {% elif order.payment_type == 'Installment' %}
+                      <td class="text-bold text-orange">{{order.payment_type}}</td>
+                      {% else %}
+                      <td class="text-bold text-success">{{order.payment_type}}</td>
+                      {% endif %}
+                      
+                      <td>{{order.updated_at.date}} - {{order.updated_at.time}}</td>
+                      <td><a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-print-{{order.id}}">
+                        <i class="fas fa-print text-dark"></i></a></td>
+                    </tr>
+                    {% include "Sales/partials/print_modal.html" %}
+                  {% endfor %}
+                  
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th><i class="fa fa-file text-info"></i> Invoice No.</th>
+                    <th><i class="fa fa-user text-info"></i> Customer</th>
+                    <th><i class="fa fa-phone text-info"></i> Phone</th>
+                    <th><i class="fas fa-funnel-dollar text-info"></i> Total (Rs.)</th>
+                    <th><i class="fas fa-funnel-dollar text-info"></i> Discount</th>
+                    <th><i class="fas fa-funnel-dollar text-info"></i> Remaining (Rs.)</th>
+                    <th><i class="fas fa-file text-info"></i> Status</th>
+                    <th><i class="fas fa-calendar-alt text-info"></i> Date 
+                      <i class="fas fa-clock text-info"></i> Time</th>
+                    <th>Action</th>
+                  </tr>
+                </tfoot>
+              </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+{% endblock main_content %}
+
+{% block script_content %}
+  <!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "lengthChange": true, 
+      "autoWidth": true,
+      "info": true,
+      "ordering": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+{% endblock script_content %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block static_content %}
+  
+{% endblock static_content %}
+
+
+{% block breadcrum_content %}
+    <div class="col-sm-6">
+        <h1 class="m-0">Delete Product Category</h1>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active"><a href="{% url 'products_list' %}">Products</a></li>
+            <li class="breadcrumb-item active"><a href="{% url 'products_category_list' %}">Categories</a></li>
+            <li class="breadcrumb-item">Delete</li>
+        </ol>
+    </div><!-- /.col -->
+{% endblock breadcrum_content %}
+
+
+{% block main_content %}
+    <!-- Add Product form -->
+    <div class="row">
+        <div class="col-12">
+            
+        </div>
+    </div>
+{% endblock main_content %}
+
+
+{% block script_content %}
+  
+{% endblock script_content %}

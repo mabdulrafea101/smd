@@ -1,0 +1,46 @@
+<div class="modal fade" id="modal-{{product.product.distributor.id}}">
+    <div class="modal-dialog">
+      <div class="modal-content bg-secondary">
+        <div class="modal-header">
+          <h4 class="modal-title text-orange text-bold">{{product.product.distributor.company_name}}</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <dl class="row">
+                <dt class="col-sm-4 text-dark">ID</dt>
+                <dd class="col-sm-8">{{product.product.distributor.id}}</dd>
+                <dt class="col-sm-4 text-dark">Shop Phone</dt>
+                <dd class="col-sm-8">{{product.product.distributor.phone}}</dd>
+                <dt class="col-sm-4 text-dark">Distributor</dt>
+                {% if product.product.distributor.person_name %}
+                <dd class="col-sm-8">{{product.product.distributor.person_name}}</dd>
+                {% else %}
+                <dd class="col-sm-8 text-dark text-bold">Person name not provided</dd>
+                {% endif %}
+                <dt class="col-sm-4 text-dark">Email</dt>
+                {% if product.product.distributor.email %}
+                <dd class="col-sm-8">{{product.product.distributor.email}}</dd>
+                {% else %}
+                <dd class="col-sm-8 text-dark text-bold">Email not provided</dd>
+                {% endif %}
+                
+                <dt class="col-sm-4 text-dark">Shop Address</dt>
+                {% if product.product.distributor.address %}
+                <dd class="col-sm-8">{{product.product.distributor.address}}.</dd>
+                {% else %}
+                <dd class="col-sm-8 text-dark text-bold">Address not provided.</dd>
+                {% endif %}
+                
+            </dl>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
