@@ -20,7 +20,7 @@ from .models import Inventory, Product, ProductCategory
 
 @method_decorator([login_required, manager_required], name="dispatch")
 class ProductList(ListView):
-    model = Inventory
+    model = Product
     context_object_name = "products"
     template_name = "Products/product_list.html"
     ordering = ['id']
